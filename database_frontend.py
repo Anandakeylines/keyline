@@ -4,7 +4,7 @@ from sshtunnel import SSHTunnelForwarder
 from langchain.chains import create_sql_query_chain
 from langchain_core.prompts import PromptTemplate
 from langchain_community.utilities import SQLDatabase
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI  # ✅ Correct import (NEW)
 
 from dotenv import load_dotenv
 import os
@@ -27,7 +27,7 @@ DB_NAME = os.getenv("DB_NAME")
 def strict_sql_chain(llm, db):
     prompt_text = (
         "You are an expert MySQL query generator.\n\n"
-        "Given the user's question and the database schema below, you MUST output a valid SQL query"
+        "Given the user's question and the database schema below, you MUST output a valid SQL query "
         "that can run directly on the connected MySQL database.\n\n"
         "RULES:\n"
         "- Do NOT explain or reason.\n"
@@ -150,12 +150,13 @@ if st.button("Run Query"):
     if question.strip() == "":
         st.warning("Please enter a question.")
     else:
-        llm = ChatOpenAI(model="gpt-4.1", temperature=0)
+        llm = ChatOpenAI(
+            model="gpt-4.1",
+            temperature=0,
+            api_key=os.getenv("OPENAI_API_KEY")   # ✅ MUST INCLUDE THIS
+        )
         result = dataBase(question, llm)
 
         if result:
             st.success("Query executed successfully!")
             st.write(result)
-
-
-
