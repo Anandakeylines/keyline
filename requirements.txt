@@ -7,3 +7,4 @@ sshtunnel==0.4.0
 pymysql==1.1.1
 sqlalchemy==2.0.35
 cryptography==43.0.1
+langchain_openai
