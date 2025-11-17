@@ -4,7 +4,7 @@ from sshtunnel import SSHTunnelForwarder
 from langchain.chains import create_sql_query_chain
 from langchain_core.prompts import PromptTemplate
 from langchain_community.utilities import SQLDatabase
-from langchain_openai import ChatOpenAI  # ✅ Correct import (NEW)
+from langchain_openai import ChatOpenAI
 
 from dotenv import load_dotenv
 import os
@@ -34,9 +34,8 @@ def strict_sql_chain(llm, db):
         "- Do NOT include any text outside the SQL.\n"
         "- Always wrap your SQL in triple backticks like this:\n"
         "```sql\nSELECT * FROM table_name;\n```\n"
-        "- Always use LIKE with wildcards for text searches when the user gives partial or approximate names.\n"
-        "- Always use existing column names exactly as shown in the schema.\n"
-        "- If unsure about column names, infer logically from the schema.\n\n"
+        "- Always use LIKE with wildcards for text searches when the user gives partial names.\n"
+        "- Always use exact column names from the schema.\n\n"
         "Database schema:\n{table_info}\n\n"
         "User question:\n{input}\n\n"
         "Relevant tables:\n{top_k}\n"
@@ -68,6 +67,7 @@ def dataBase(question: str, llm):
         )
 
         schema = db.get_table_info()
+
         try:
             table_data = db.run("SHOW TABLES;")
             table_names = [t[0] for t in table_data]
@@ -105,7 +105,7 @@ def dataBase(question: str, llm):
             if "Unknown column" in error_msg or "doesn't exist" in error_msg:
                 follow_up = (
                     f"The previous query failed with error: {error_msg}. "
-                    f"Rewrite the SQL correctly using only existing columns from this schema:\n{schema}\n"
+                    f"Rewrite the SQL using ONLY valid columns from this schema:\n{schema}\n"
                     f"Question: {question}"
                 )
                 retry_res = chain.invoke({
@@ -150,11 +150,15 @@ if st.button("Run Query"):
     if question.strip() == "":
         st.warning("Please enter a question.")
     else:
+
+        # ✅ FIX: disable proxy injection in OpenAI client
         llm = ChatOpenAI(
             model="gpt-4.1",
             temperature=0,
-            api_key=os.getenv("OPENAI_API_KEY")   # ✅ MUST INCLUDE THIS
+            api_key=os.getenv("OPENAI_API_KEY"),
+            openai_proxy=None         # 🔥 FIXES THE PROXIES ERROR
         )
+
         result = dataBase(question, llm)
 
         if result:
