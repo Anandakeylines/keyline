@@ -2,9 +2,9 @@ import streamlit as st
 import re
 from sshtunnel import SSHTunnelForwarder
 from langchain.chains import create_sql_query_chain
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain_community.utilities import SQLDatabase
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 
 from dotenv import load_dotenv
 import os
@@ -42,7 +42,7 @@ def strict_sql_chain(llm, db):
         "Relevant tables:\n{top_k}\n"
     )
 
-    prompt = ChatPromptTemplate.from_template(prompt_text)
+    prompt = PromptTemplate.from_template(prompt_text)
     return create_sql_query_chain(llm, db, prompt=prompt)
 
 
@@ -156,5 +156,6 @@ if st.button("Run Query"):
         if result:
             st.success("Query executed successfully!")
             st.write(result)
+
 
 
