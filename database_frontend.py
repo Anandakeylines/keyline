@@ -4,7 +4,7 @@ from sshtunnel import SSHTunnelForwarder
 from langchain.chains import create_sql_query_chain
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.utilities import SQLDatabase
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 
 from dotenv import load_dotenv
 import os
@@ -156,3 +156,4 @@ if st.button("Run Query"):
         if result:
             st.success("Query executed successfully!")
             st.write(result)
+
