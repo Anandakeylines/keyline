@@ -1,17 +1,12 @@
-# streamlit app + langchain + OpenAI
 streamlit==1.39.0
-
-# OpenAI python client compatible with langchain 0.3.x
 openai==1.47.1
 
-# LangChain core packages
+# Compatible LangChain family
 langchain==0.3.3
-langchain-core==0.3.79
 langchain-community==0.3.2
 langchain-openai==0.2.2
-langsmith==0.1.147
+langchain-core==0.3.79
 
-# DB / SSH dependencies
 python-dotenv==1.0.1
 sshtunnel==0.4.0
 pymysql==1.1.1
